@@ -40,8 +40,8 @@ function love.load()
   sound = love.audio.newSource("music/music.mp3")
   love.audio.setVolume(0.09)
   isPlaying = false
-  player = {x = test:getWidth(), y = test:getHeight(), cd = 0, isSprinting = 0}
-  playerSpeed = 230
+  player = {direction = "right", cd = 0, isSprinting = 0}
+  playerSpeed = 125
   playerSprintingSpeed = 280
   cdt = 3
   updateRate = 0.001
@@ -55,13 +55,11 @@ function love.update(dt)
   TEsound.cleanup()
   udpmessage()
   move(dt)
-  if player.x < 0 then player.x = width elseif player.x > width then player.x = 0 end
-  if player.y < 0 then player.y = height elseif player.y > height then player.y = 0 end
   if player.isSprinting > 0 then player.isSprinting = player.isSprinting - dt end
 
   if timeUntilUpadate < 0 then
     timeUntilUpadate = updateRate
-    udp:send(id.." position ".. player.x.." "..player.y)
+    udp:send(id.." position ".. objects.player.body:getX().." "..objects.player.body:getY())
   else
     timeUntilUpadate = timeUntilUpadate - dt
   end
@@ -70,7 +68,10 @@ end
 function love.draw()
   love.graphics.setColor(255, 255, 255)
   love.graphics.print("FPS: "..tostring(love.timer.getFPS()), 1533, 05)
-  love.graphics.draw(test, objects.player.body:getX(), objects.player.body:getY(), 0, 2, 2, test:getWidth()/2, test:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
+  if player.direction == "right" then
+    love.graphics.draw(test, objects.player.body:getX(), objects.player.body:getY(), 0, 2, 2, test:getWidth()/2, test:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
+  else love.graphics.draw(test, objects.player.body:getX(), objects.player.body:getY(), 0, -2, 2, test:getWidth()/2, test:getHeight()/2)
+  end
   love.graphics.setColor(252, 45, 201)
   love.graphics.draw(test, enemy.x, enemy.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2)
   love.graphics.setColor(255, 255, 255)
@@ -78,13 +79,6 @@ function love.draw()
     love.graphics.setColor(255,3,59)
   end
     love.graphics.rectangle("fill", 1580, 0, 20, 20)
-<<<<<<< HEAD
-
-
-
-
-=======
->>>>>>> refs/remotes/origin/master
 end
 function love.mousepressed (x, y)
   if x > 1580 and  x < 1600  and y > 0 and y < 20 then
@@ -100,6 +94,7 @@ function love.keypressed(key)
   if key == "lshift" and player.cd < 0 then
     player.cd = cdt
     isSprinting = 3
+
   elseif key == "escape" then
     udp:send(id.." disconnected")
     love.event.quit()
@@ -130,10 +125,12 @@ function move(dt)
   if player.isSprinting > 0 then speed = playerSprintingSpeed end
   player.cd = player.cd - dt
   if love.keyboard.isDown("d") then
-    objects.player.body:applyForce(125, 0)
+    objects.player.body:applyForce(speed, 0)
+    player.direction = "right"
   end
   if love.keyboard.isDown("q") then
-    objects.player.body:applyForce(-125, 0)
+    objects.player.body:applyForce(-speed, 0)
+    player.direction = "left"
   end
 end
 -- function move(dt)
