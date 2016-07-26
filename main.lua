@@ -17,13 +17,13 @@ function love.load()
   love.graphics.setDefaultFilter("nearest")
   test = love.graphics.newImage("sprites/test.png")
   sound = love.audio.newSource("music/music.mp3")
-  love.audio.play(sound)
-  love.audio.setVolume(0)
+  love.audio.setVolume(0.09)
+  isPlaying = false
   player = {x = test:getWidth(), y = test:getHeight(), cd = 0, isSprinting = 0}
   playerSpeed = 230
   playerSprintingSpeed = 280
   cdt = 3
-  updateRate = 0.1
+  updateRate = 0.0001
   timeUntilUpadate = 0
   enemy = {x = 25056565, y = 55656}
 end
@@ -46,10 +46,24 @@ end
 
 function love.draw()
   love.graphics.setColor(255, 255, 255)
-  love.graphics.print("FPS: "..tostring(love.timer.getFPS()), 1540, 05)
+  love.graphics.print("FPS: "..tostring(love.timer.getFPS()), 1533, 05)
   love.graphics.draw(test, player.x, player.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
   love.graphics.setColor(252, 45, 201)
   love.graphics.draw(test, enemy.x, enemy.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2)
+  love.graphics.setColor(255, 255, 255)
+  love.graphics.rectangle("fill", 1580, 0, 20, 20)
+
+
+
+end
+function love.mousepressed (x, y)
+  if x > 1580 and  x < 1600  and y > 0 and y < 20 then
+    if not isPlaying then isPlaying = true
+      love.audio.play(sound)
+    else isPlaying = false
+      love.audio.stop(sound)
+    end
+  end
 end
 
 function love.keypressed(key)
