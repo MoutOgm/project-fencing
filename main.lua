@@ -23,7 +23,7 @@ function love.load()
   playerSpeed = 230
   playerSprintingSpeed = 280
   cdt = 3
-  updateRate = 0.0001
+  updateRate = 0.001
   timeUntilUpadate = 0
   enemy = {x = 25056565, y = 55656}
 end
@@ -51,7 +51,11 @@ function love.draw()
   love.graphics.setColor(252, 45, 201)
   love.graphics.draw(test, enemy.x, enemy.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2)
   love.graphics.setColor(255, 255, 255)
-  love.graphics.rectangle("fill", 1580, 0, 20, 20)
+  if isPlaying then
+    love.graphics.setColor(255,3,59)
+  end
+    love.graphics.rectangle("fill", 1580, 0, 20, 20)
+
 
 
 
