@@ -98,6 +98,8 @@ function love.keypressed(key)
     love.event.quit()
   elseif key == "space" then
     objects.player.body:applyForce(0, -8200)
+  elseif key == "f" then
+    objects.player.body:setPosition(800, 600)
   end
 end
 function udpmessage()
