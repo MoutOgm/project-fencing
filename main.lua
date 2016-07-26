@@ -14,6 +14,8 @@ function loadPhysics()
   objects.player.fixture:setFriction(0.3)
   objects.player.body:setMass(0.62)
 
+  objects.arme = {}
+
   objects.ground = {}
   objects.ground.body = love.physics.newBody(world, width/2, height - 300/2)
   objects.ground.shape = love.physics.newRectangleShape(width, 300)
@@ -36,6 +38,7 @@ function love.load()
   width , height = 1600, 900
   love.window.setMode(width, height, {fullscreen = true})
   love.graphics.setDefaultFilter("nearest")
+  epee = love.graphics.newImage("sprites/epee.png")
   test = love.graphics.newImage("sprites/test.png")
   sound = love.audio.newSource("music/music.mp3")
   love.audio.setVolume(0.09)
@@ -71,6 +74,10 @@ function love.draw()
   if player.direction == "right" then
     love.graphics.draw(test, objects.player.body:getX(), objects.player.body:getY(), 0, 2, 2, test:getWidth()/2, test:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
   else love.graphics.draw(test, objects.player.body:getX(), objects.player.body:getY(), 0, -2, 2, test:getWidth()/2, test:getHeight()/2)
+    -- if player.direction == "right" then
+    --   love.graphics.draw(epee, objects.player.body:getX(), objects.player.body:getY(), 0, 2, 2, test:getWidth()/2, test:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
+    -- else love.graphics.draw(epee, objects.player.body:getX(), objects.player.body:getY(), 0, -2, 2, test:getWidth()/2, test:getHeight()/2)
+    -- end
   end
   love.graphics.setColor(252, 45, 201)
   love.graphics.draw(test, enemy.x, enemy.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2)
