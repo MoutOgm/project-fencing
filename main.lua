@@ -54,6 +54,7 @@ function love.load()
   cdt = 3
   updateRate = 0.001
   timeUntilUpadate = 0
+  gravity = 100
   enemy = {x = 25056565, y = 55656}
 end
 
