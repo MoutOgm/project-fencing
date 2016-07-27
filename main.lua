@@ -15,6 +15,11 @@ function loadPhysics()
   objects.player.body:setMass(0.62)
 
   objects.arme = {}
+  objects.arme.body = love.physics.newBody(world, 250, 100, "dynamic")
+  objects.arme.shape = love.physics.newRectangleShape(epee:getWidth()*3, epee:getHeight()*2)
+  objects.arme.fixture = love.physics.newFixture(objects.arme.body, objects.arme.shape)
+  objects.arme.fixture:setFriction(0.75)
+  objects.arme.body:setMass(0.25)
 
   objects.ground = {}
   objects.ground.body = love.physics.newBody(world, width/2, height - 300/2)
@@ -44,11 +49,13 @@ function love.load()
   love.audio.setVolume(0.09)
   isPlaying = false
   player = {direction = "right", cd = 0, isSprinting = 0}
+  arme = {direction = "right"}
   playerSpeed = 125
   playerSprintingSpeed = 280
   cdt = 3
   updateRate = 0.001
   timeUntilUpadate = 0
+  enemyarme = {x = 45548, y = 5465}
   enemy = {x = 25056565, y = 55656}
   loadPhysics()
 end
@@ -63,6 +70,7 @@ function love.update(dt)
   if timeUntilUpadate < 0 then
     timeUntilUpadate = updateRate
     udp:send(id.." position ".. objects.player.body:getX().." "..objects.player.body:getY())
+    udp:send(id.." position ".. objects.arme.body:getX().." "..objects.arme.body:getY())
   else
     timeUntilUpadate = timeUntilUpadate - dt
   end
@@ -74,13 +82,18 @@ function love.draw()
   if player.direction == "right" then
     love.graphics.draw(test, objects.player.body:getX(), objects.player.body:getY(), 0, 2, 2, test:getWidth()/2, test:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
   else love.graphics.draw(test, objects.player.body:getX(), objects.player.body:getY(), 0, -2, 2, test:getWidth()/2, test:getHeight()/2)
+  end
     -- if player.direction == "right" then
     --   love.graphics.draw(epee, objects.player.body:getX(), objects.player.body:getY(), 0, 2, 2, test:getWidth()/2, test:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
     -- else love.graphics.draw(epee, objects.player.body:getX(), objects.player.body:getY(), 0, -2, 2, test:getWidth()/2, test:getHeight()/2)
     -- end
+    if arme.direction == "right" then
+      love.graphics.draw(epee, objects.arme.body:getX(), objects.arme.body:getY(), 0, 2, 2, epee:getWidth()/2, epee:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
+    else love.graphics.draw(epee, objects.arme.body:getX(), objects.arme.body:getY(), 0, -2, 2, epee:getWidth()/2, epee:getHeight()/2)
   end
   love.graphics.setColor(252, 45, 201)
   love.graphics.draw(test, enemy.x, enemy.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2)
+  love.graphics.draw(epee, enemyarme.x, enemyarme.y, 0, 2, 2, test:getWidth()/2, test:getHeight(256)/2)
   love.graphics.setColor(255, 255, 255)
   if isPlaying then
     love.graphics.setColor(255,3,59)
@@ -121,6 +134,11 @@ function udpmessage()
         if data [2] == "position" then
           enemy.x = data [3]
           enemy.y = data [4]
+        end
+        print(data [5])
+        if data [5] == "position" then
+          arme.x = data [6]
+          arme.y = data [7]
         end
       end
     end
