@@ -48,14 +48,13 @@ function love.load()
   sound = love.audio.newSource("music/music.mp3")
   love.audio.setVolume(0.09)
   isPlaying = false
-  player = {direction = "right", cd = 0, isSprinting = 0, x = 0, y = 0, momentun = {x = 0, y = 0}}
-  playerSpeed = 125
-  playerSprintingSpeed = 280
+  player = {direction = "right", cd = 0, isSprinting = 0, x = 0, y = 0, momentum = {x = 0, y = 0}}
+  playerSpeed = 150
+  playerSprintingSpeed = 300
   cdt = 3
   updateRate = 0.001
   timeUntilUpadate = 0
   enemy = {x = 25056565, y = 55656}
-  -- loadPhysics()
 end
 
 function love.update(dt)
@@ -75,16 +74,17 @@ end
 
 function love.draw()
   love.graphics.setColor(255, 255, 255)
+  love.graphics.print(player.cd, 10, 10)
   love.graphics.print("FPS: "..tostring(love.timer.getFPS()), 1533, 05)
   if player.direction == "right" then
     love.graphics.draw(test, player.x, player.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
   else
     love.graphics.draw(test, player.x, player.y, 0, -2, 2, test:getWidth()/2, test:getHeight()/2)
   end
-    -- if player.direction == "right" then
-    --   love.graphics.draw(epee, player.x, player.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
-    -- else love.graphics.draw(epee, player.x, player.y, 0, -2, 2, test:getWidth()/2, test:getHeight()/2)
-    -- end
+  -- if player.direction == "right" then
+  --   love.graphics.draw(epee, player.x, player.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
+  -- else love.graphics.draw(epee, player.x, player.y, 0, -2, 2, test:getWidth()/2, test:getHeight()/2)
+  -- end
   if player.direction == "right" then
     love.graphics.draw(epee, player.x, player.y, 0, 2, 2, epee:getWidth()/2, epee:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
   else
@@ -96,7 +96,7 @@ function love.draw()
   if isPlaying then
     love.graphics.setColor(255,3,59)
   end
-    love.graphics.rectangle("fill", 1580, 0, 20, 20)
+  love.graphics.rectangle("fill", 1580, 0, 20, 20)
 end
 
 function love.mousepressed (x, y)
@@ -112,15 +112,13 @@ end
 function love.keypressed(key)
   if key == "lshift" and player.cd < 0 then
     player.cd = cdt
-    isSprinting = 3
-
+    player.isSprinting = 1
   elseif key == "escape" then
     udp:send(id.." disconnected")
     love.event.quit()
   elseif key == "space" then
-    objects.player.body:applyForce(0, -8200)
   elseif key == "f" then
-    objects.player.body:setPosition(800, 600)
+    player.X, player.y = 800, 600
   end
 end
 
@@ -145,8 +143,12 @@ end
 
 function movements(dt)
   local speed = playerSpeed
-  if player.isSprinting > 0 then speed = playerSprintingSpeed end
-  player.cd = player.cd - dt
+  if player.isSprinting > 0 then
+    speed = playerSprintingSpeed
+  else
+    player.cd = player.cd - dt
+  end
+
   if love.keyboard.isDown("d") then
     player.x = player.x + speed*dt
   end
@@ -156,8 +158,8 @@ function movements(dt)
 end
 
 function updatepos(dt)
-  player.x = player.x + player.momentun.x*dt
-  player.y = player.y + player.momentun.y*dt
+  player.x = player.x + player.momentum.x*dt
+  player.y = player.y + player.momentum.y*dt
 
 
 end
