@@ -93,6 +93,7 @@ function love.draw()
   end
   love.graphics.setColor(252, 45, 201)
   love.graphics.draw(test, enemy.x, enemy.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2)
+  love.graphics.draw(epee, enemyarme.x, enemyarme.y, 0, 2, 2, epee:getWidth()/2, epee:getHeight()/2)
   love.graphics.setColor(255, 255, 255)
   if isPlaying then
     love.graphics.setColor(255,3,59)
@@ -133,11 +134,8 @@ function udpmessage()
         if data [2] == "position" then
           enemy.x = data [3]
           enemy.y = data [4]
-        end
-        print(data [5])
-        if data [5] == "position" then
-          arme.x = data [6]
-          arme.y = data [7]
+          enemyarme.x = data [5]
+          enemyarme.y = data [6]
         end
       end
     end
