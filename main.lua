@@ -59,9 +59,9 @@ end
 
 function love.update(dt)
   TEsound.cleanup()
-  udpmessage()
+  udpReceive()
+  updatePhysics(dt)
   movements(dt)
-  updatepos(dt)
   if player.isSprinting > 0 then player.isSprinting = player.isSprinting - dt end
 
   if timeUntilUpadate < 0 then
@@ -74,24 +74,22 @@ end
 
 function love.draw()
   love.graphics.setColor(255, 255, 255)
-  love.graphics.print(player.cd, 10, 10)
   love.graphics.print("FPS: "..tostring(love.timer.getFPS()), 1533, 05)
   if player.direction == "right" then
-    love.graphics.draw(test, player.x, player.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
+    love.graphics.draw(test, player.x, player.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2)
   else
     love.graphics.draw(test, player.x, player.y, 0, -2, 2, test:getWidth()/2, test:getHeight()/2)
   end
-  -- if player.direction == "right" then
-  --   love.graphics.draw(epee, player.x, player.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
-  -- else love.graphics.draw(epee, player.x, player.y, 0, -2, 2, test:getWidth()/2, test:getHeight()/2)
-  -- end
+
   if player.direction == "right" then
-    love.graphics.draw(epee, player.x, player.y, 0, 2, 2, epee:getWidth()/2, epee:getHeight()/2) --  love.graphics.circle("fill", player.x, player.y, 9)
+    love.graphics.draw(epee, player.x, player.y, 0, 2, 2, epee:getWidth()/2, epee:getHeight()/2)
   else
     love.graphics.draw(epee, player.x, player.y, 0, -2, 2, epee:getWidth()/2, epee:getHeight()/2)
   end
+
   love.graphics.setColor(252, 45, 201)
   love.graphics.draw(test, enemy.x, enemy.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2)
+
   love.graphics.setColor(255, 255, 255)
   if isPlaying then
     love.graphics.setColor(255,3,59)
@@ -122,7 +120,7 @@ function love.keypressed(key)
   end
 end
 
-function udpmessage()
+function udpReceive()
   repeat
     data = udp:receive()
     if data ~= nil then
@@ -137,8 +135,12 @@ function udpmessage()
         end
       end
     end
-
   until not data
+end
+
+function updatePhysics(dt)
+  player.momentum.y = player.momentum.y + gravity*dt
+  updatePos(dt)
 end
 
 function movements(dt)
@@ -152,14 +154,13 @@ function movements(dt)
   if love.keyboard.isDown("d") then
     player.x = player.x + speed*dt
   end
+
   if love.keyboard.isDown("q") then
     player.x = player.x - speed*dt
   end
 end
 
-function updatepos(dt)
+function updatePos(dt)
   player.x = player.x + player.momentum.x*dt
   player.y = player.y + player.momentum.y*dt
-
-
 end
