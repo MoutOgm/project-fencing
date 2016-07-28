@@ -29,7 +29,7 @@ function love.load()
   timeUntilUpadate = 0
   gravity = 1000
   groundHeight = 800
-  enemy = {direction = "right", x = 25056565, y = 55656}
+  enemy = {direction = "right", x = 25056565, y = 55656, swordRotation = "forward"}
 end
 
 function love.update(dt)
@@ -43,6 +43,7 @@ function love.update(dt)
     timeUntilUpadate = updateRate
     udp:send(id.." position ".. player.x.." "..player.y)
     udp:send(id.." direction ".. player.direction)
+    udp:send(id.." position epee".. player.swordRotation)
   else
     timeUntilUpadate = timeUntilUpadate - dt
   end
@@ -80,6 +81,23 @@ function love.draw()
     love.graphics.draw(test, enemy.x, enemy.y, 0, playerScale, playerScale, test:getWidth()/2, test:getHeight()/2)
   else
     love.graphics.draw(test, enemy.x, enemy.y, 0,  - playerScale, playerScale, test:getWidth()/2, test:getHeight()/2)
+  end
+  if player.direction == "right" then
+    if player.swordRotation == "forward" then
+      love.graphics.draw(epee, enemy.x + playerScale * 6, enemy.y + 4, 0, playerScale, playerScale, 0, epee:getHeight()/2)
+    elseif player.swordRotation == "up" then
+      love.graphics.draw(epee, enemy.x + playerScale * 6, enemy.y + 4, - math.pi/4,  playerScale, playerScale, 0, epee:getHeight()/2)
+    elseif player.swordRotation == "down" then
+      love.graphics.draw(epee, enemy.x + playerScale * 6, enemy.y + 4, math.pi/4, playerScale, playerScale, 0, epee:getHeight()/2)
+    end
+  else
+    if player.swordRotation == "forward" then
+      love.graphics.draw(epee, enemy.x - playerScale * 6, enemy.y + 4, math.pi, playerScale, playerScale, 0, epee:getHeight()/2)
+    elseif player.swordRotation == "up" then
+      love.graphics.draw(epee, enemy.x - playerScale * 6, enemy.y + 4, math.pi/4*5, playerScale, playerScale, 0, epee:getHeight()/2)
+    elseif player.swordRotation == "down" then
+      love.graphics.draw(epee, enemy.x - playerScale * 6, enemy.y + 4, math.pi/4*3, playerScale, playerScale, 0, epee:getHeight()/2)
+    end
   end
 
   love.graphics.setColor(255, 255, 255)

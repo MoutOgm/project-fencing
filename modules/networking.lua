@@ -20,6 +20,7 @@ function networking.receive()
           enemy.y = data [4]
         elseif data [2] == "direction" then
           enemy.direction = data [3]
+          enemy.swordRotation = data [4]
         end
       end
     end
