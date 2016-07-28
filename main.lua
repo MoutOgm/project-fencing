@@ -2,6 +2,8 @@ require "modules.TEsound"
 require "socket"
 require "math"
 require "modules.tools"
+require "modules.physics"
+require "modules.networkings"
 
 -- function loadPhysics()
 --   love.physics.setMeter(100)
@@ -32,14 +34,7 @@ require "modules.tools"
 function love.load()
 
   math.randomseed(os.time())
-
-
-  udp = socket.udp()
-  udp:settimeout(0)
-  udp:setpeername("localhost", 53715)
-  id = tostring(math.random(0, 100000))
-  udp:send(id.." connected")
-
+  networking.load()
   width , height = 1600, 900
   love.window.setMode(width, height, {fullscreen = true})
   love.graphics.setDefaultFilter("nearest")
@@ -49,7 +44,9 @@ function love.load()
   soundm = love.audio.newSource("music/passilence.wav")
   love.audio.setVolume(1)
   isPlaying = false
-  player = {direction = "right", cd = 0, isSprinting = 0, x = 0, y = 0, momentum = {x = 0, y = 0}}
+  player = {direction = "right", cd = 0, isSprinting = 0, x = 0, y = 0, momentum = {x = 0, y = 0}, rotateSword = "forward", onGround = true}
+  sizeplayer = test:getWidth()
+  playerScale = 4
   playerSpeed = 150
   playerSprintingSpeed = 300
   cdt = 3
@@ -62,8 +59,8 @@ end
 
 function love.update(dt)
   TEsound.cleanup()
-  udpReceive()
-  updatePhysics(dt)
+  networking.receive()
+  physics.update(dt)
   movements(dt)
   if player.isSprinting > 0 then player.isSprinting = player.isSprinting - dt end
 
@@ -79,19 +76,31 @@ function love.draw()
   love.graphics.setColor(255, 255, 255)
   love.graphics.print("FPS: "..tostring(love.timer.getFPS()), 1533, 05)
   if player.direction == "right" then
-    love.graphics.draw(test, player.x, player.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2)
+    love.graphics.draw(test, player.x, player.y, 0, playerScale, playerScale, test:getWidth()/2, test:getHeight()/2)
   else
-    love.graphics.draw(test, player.x, player.y, 0, -2, 2, test:getWidth()/2, test:getHeight()/2)
+    love.graphics.draw(test, player.x, player.y, 0,  - playerScale, playerScale, test:getWidth()/2, test:getHeight()/2)
   end
 
   if player.direction == "right" then
-    love.graphics.draw(epee, player.x, player.y, 0, 2, 2, epee:getWidth()/2, epee:getHeight()/2)
+    if player.rotateSword == "forward" then
+      love.graphics.draw(epee, player.x + playerScale * 6, player.y + 4, 0, playerScale, playerScale, 0, epee:getHeight()/2)
+    elseif player.rotateSword == "up" then
+      love.graphics.draw(epee, player.x + playerScale * 6, player.y + 4, - math.pi/4,  playerScale, playerScale, 0, epee:getHeight()/2)
+    elseif player.rotateSword == "down" then
+      love.graphics.draw(epee, player.x + playerScale * 6, player.y + 4, math.pi/4, playerScale, playerScale, 0, epee:getHeight()/2)
+    end
   else
-    love.graphics.draw(epee, player.x, player.y, 0, -2, 2, epee:getWidth()/2, epee:getHeight()/2)
+    if player.rotateSword == "forward" then
+      love.graphics.draw(epee, player.x - playerScale * 6, player.y + 4, math.pi, playerScale, playerScale, 0, epee:getHeight()/2)
+    elseif player.rotateSword == "up" then
+      love.graphics.draw(epee, player.x - playerScale * 6, player.y + 4, math.pi/4*3, playerScale, playerScale, 0, epee:getHeight()/2)
+    elseif player.rotateSword == "down" then
+      love.graphics.draw(epee, player.x - playerScale * 6, player.y + 4, math.pi/4*5, playerScale, playerScale, 0, epee:getHeight()/2)
+    end
   end
 
   love.graphics.setColor(252, 45, 201)
-  love.graphics.draw(test, enemy.x, enemy.y, 0, 2, 2, test:getWidth()/2, test:getHeight()/2)
+  love.graphics.draw(test, enemy.x, enemy.y, 0, playerScale, playerScale, test:getWidth()/2, test:getHeight()/2)
 
   love.graphics.setColor(255, 255, 255)
   if isPlaying then
@@ -117,41 +126,24 @@ function love.keypressed(key)
   elseif key == "escape" then
     udp:send(id.." disconnected")
     love.event.quit()
-  elseif key == "space" then
-    player.momentum.y = -200
+  elseif key == "space" and player.onGround then
+    player.momentum.y = -350
   elseif key == "f" then
     player.X = 800
     player.y = 0
+  elseif key == "z" then
+    player.rotateSword = "up"
+  elseif key == "s" then
+    player.rotateSword = "down"
   end
-  if key == "space" then
-    player.momentum.y = player.momentum.y - 100
-end
 end
 
-function udpReceive()
-  repeat
-    data = udp:receive()
-    if data ~= nil then
-      data = tools.split(data, " ")
-      if data [1] ~= id then
-        print(data [2])
-        if data [2] == "position" then
-          enemy.x = data [3]
-          enemy.y = data [4]
-        end
-      end
-    end
-  until not data
-end
-
-function updatePhysics(dt)
-  player.momentum.y = player.momentum.y + gravity*dt
-  if player.y < groundHeight then
-    player.y = player.y + player.momentum.y*dt
-  elseif player.momentum.y < 0 then
-    player.y = player.y + player.momentum.y*dt
+function love.keyreleased(key)
+  if key == "z" then
+    player.rotateSword = "forward"
+  elseif key == "s" then
+    player.rotateSword = "forward"
   end
-  player.x = player.x + player.momentum.x*dt
 end
 
 function movements(dt)
@@ -162,15 +154,19 @@ function movements(dt)
     player.cd = player.cd - dt
   end
 
-  if love.keyboard.isDown("d") then
+  if love.keyboard.isDown("d") and not physics.intersect(player.x + speed*dt - sizeplayer/2*playerScale, player.y - sizeplayer/2*playerScale, player.x + speed*dt + sizeplayer/2*playerScale, player.y + sizeplayer/2*playerScale, enemy.x - sizeplayer/2*playerScale, enemy.y - sizeplayer/2*playerScale, enemy.x + sizeplayer/2*playerScale, enemy.y + sizeplayer/2*playerScale) then
     player.x = player.x + speed*dt
-    love.audio.play(soundm)
+    if player.onGround then
+      love.audio.play(soundm)
+    end
     player.direction = "right"
   end
 
-  if love.keyboard.isDown("q") then
+  if love.keyboard.isDown("q") and not physics.intersect(player.x - speed*dt - sizeplayer/2*playerScale, player.y - sizeplayer/2*playerScale, player.x - speed*dt + sizeplayer/2*playerScale, player.y + sizeplayer/2*playerScale, enemy.x - sizeplayer/2*playerScale, enemy.y - sizeplayer/2*playerScale, enemy.x + sizeplayer/2*playerScale, enemy.y + sizeplayer/2*playerScale) then
     player.x = player.x - speed*dt
-    love.audio.play(soundm)
+    if player.onGround then
+      love.audio.play(soundm)
+    end
     player.direction = "left"
   end
 end
