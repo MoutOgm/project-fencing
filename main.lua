@@ -5,36 +5,11 @@ require "modules.tools"
 require "modules.physics"
 require "modules.networking"
 
--- function loadPhysics()
---   love.physics.setMeter(100)
---   world = love.physics.newWorld(0, 600, true)
---   objects = {}
---   objects.player = {}
---   objects.player.body = love.physics.newBody(world, test:getWidth(), test:getHeight(), "dynamic")
---   objects.player.shape = love.physics.newRectangleShape(test:getWidth(), test:getHeight())
---   objects.player.fixture = love.physics.newFixture(objects.player.body, objects.player.shape)
---   objects.player.fixture:setFriction(0.2)
---   objects.player.body:setMass(0.62)
---
---   objects.arme = {}
---   objects.arme.body = love.physics.newBody(world, 250, 100, "dynamic")
---   objects.arme.shape = love.physics.newRectangleShape(epee:getWidth()*3, epee:getHeight()*2)
---   objects.arme.fixture = love.physics.newFixture(objects.arme.body, objects.arme.shape)
---   objects.arme.fixture:setFriction(0.5)
---   objects.arme.body:setMass(0.3)
---
---   objects.ground = {}
---   objects.ground.body = love.physics.newBody(world, width/2, height - 300/2)
---   objects.ground.shape = love.physics.newRectangleShape(width, 300)
---   objects.ground.fixture = love.physics.newFixture(objects.ground.body, objects.ground.shape)
---   objects.ground.fixture:setFriction(0.2)
---
--- end
-
 function love.load()
 
   math.randomseed(os.time())
-  networking.load()
+  options = tools.readOptions("options.ini")
+  networking.load(options.ip, options.port)
   width , height = 1600, 900
   love.window.setMode(width, height, {fullscreen = true})
   love.graphics.setDefaultFilter("nearest")

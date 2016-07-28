@@ -1,9 +1,8 @@
 networking = {}
-function networking.load ()
-
+function networking.load (ip, port)
   udp = socket.udp()
   udp:settimeout(0)
-  udp:setpeername("localhost", 53715)
+  udp:setpeername(ip, port)
   id = tostring(math.random(0, 100000))
   udp:send(id.." connected")
 
