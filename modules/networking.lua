@@ -19,8 +19,7 @@ function networking.receive()
           enemy.x = data [3]
           enemy.y = data [4]
         elseif data [2] == "direction" then
-          player.direction = data [5]
-          enemy.direction = data [6]
+          enemy.direction = data [3]
         end
       end
     end

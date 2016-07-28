@@ -42,6 +42,7 @@ function love.update(dt)
   if timeUntilUpadate < 0 then
     timeUntilUpadate = updateRate
     udp:send(id.." position ".. player.x.." "..player.y)
+    udp:send(id.." direction ".. player.direction)
   else
     timeUntilUpadate = timeUntilUpadate - dt
   end
