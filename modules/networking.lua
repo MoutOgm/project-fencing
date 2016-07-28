@@ -18,6 +18,8 @@ function networking.receive()
         if data [2] == "position" then
           enemy.x = data [3]
           enemy.y = data [4]
+        elseif data [2] == "direction" then
+          
         end
       end
     end

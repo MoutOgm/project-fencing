@@ -16,7 +16,7 @@ function love.load()
   epee = love.graphics.newImage("sprites/epee.png")
   test = love.graphics.newImage("sprites/test.png")
   sound = love.audio.newSource("music/music.mp3")
-  soundm = love.audio.newSource("music/passilence.wav")
+  soundm = love.audio.newSource("music/step.wav")
   love.audio.setVolume(1)
   isPlaying = false
   player = {direction = "right", cd = 0, isSprinting = 0, x = 0, y = 0, momentum = {x = 0, y = 0}, swordRotation = "forward", onGround = true}
