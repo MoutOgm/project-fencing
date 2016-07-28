@@ -46,7 +46,8 @@ function love.load()
   epee = love.graphics.newImage("sprites/epee.png")
   test = love.graphics.newImage("sprites/test.png")
   sound = love.audio.newSource("music/music.mp3")
-  love.audio.setVolume(0.09)
+  soundm = love.audio.newSource("music/step.mp3")
+  love.audio.setVolume(1)
   isPlaying = false
   player = {direction = "right", cd = 0, isSprinting = 0, x = 0, y = 0, momentum = {x = 0, y = 0}}
   playerSpeed = 150
@@ -117,7 +118,8 @@ function love.keypressed(key)
     love.event.quit()
   elseif key == "space" then
   elseif key == "f" then
-    player.X, player.y = 800, 600
+    player.X = 800
+    player.y = 0
   end
 end
 
@@ -131,8 +133,6 @@ function udpReceive()
         if data [2] == "position" then
           enemy.x = data [3]
           enemy.y = data [4]
-          enemyarme.x = data [5]
-          enemyarme.y = data [6]
         end
       end
     end
@@ -154,10 +154,12 @@ function movements(dt)
 
   if love.keyboard.isDown("d") then
     player.x = player.x + speed*dt
+    love.audio.play(soundm)
   end
 
   if love.keyboard.isDown("q") then
     player.x = player.x - speed*dt
+    love.audio.play(soundm)
   end
 end
 
