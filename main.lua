@@ -29,7 +29,7 @@ function love.load()
   timeUntilUpadate = 0
   gravity = 1000
   groundHeight = 800
-  enemy = {x = 25056565, y = 55656}
+  enemy = {direction = "right", x = 25056565, y = 55656}
 end
 
 function love.update(dt)
@@ -75,7 +75,11 @@ function love.draw()
   end
 
   love.graphics.setColor(252, 45, 201)
-  love.graphics.draw(test, enemy.x, enemy.y, 0, playerScale, playerScale, test:getWidth()/2, test:getHeight()/2)
+  if enemy.direction == "right" then
+    love.graphics.draw(test, enemy.x, enemy.y, 0, playerScale, playerScale, test:getWidth()/2, test:getHeight()/2)
+  else
+    love.graphics.draw(test, enemy.x, enemy.y, 0,  - playerScale, playerScale, test:getWidth()/2, test:getHeight()/2)
+  end
 
   love.graphics.setColor(255, 255, 255)
   if isPlaying then
