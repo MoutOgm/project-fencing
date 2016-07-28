@@ -46,7 +46,7 @@ function love.load()
   epee = love.graphics.newImage("sprites/epee.png")
   test = love.graphics.newImage("sprites/test.png")
   sound = love.audio.newSource("music/music.mp3")
-  soundm = love.audio.newSource("music/step.mp3")
+  soundm = love.audio.newSource("music/step.wav")
   love.audio.setVolume(1)
   isPlaying = false
   player = {direction = "right", cd = 0, isSprinting = 0, x = 0, y = 0, momentum = {x = 0, y = 0}}
@@ -55,7 +55,8 @@ function love.load()
   cdt = 3
   updateRate = 0.001
   timeUntilUpadate = 0
-  gravity = 100
+  gravity = 500
+  groundHeight = 800
   enemy = {x = 25056565, y = 55656}
 end
 
@@ -117,6 +118,7 @@ function love.keypressed(key)
     udp:send(id.." disconnected")
     love.event.quit()
   elseif key == "space" then
+    player.momentum.y = -200
   elseif key == "f" then
     player.X = 800
     player.y = 0
@@ -141,7 +143,12 @@ end
 
 function updatePhysics(dt)
   player.momentum.y = player.momentum.y + gravity*dt
-  updatePos(dt)
+  if player.y < groundHeight then
+    player.y = player.y + player.momentum.y*dt
+  elseif player.momentum.y < 0 then
+    player.y = player.y + player.momentum.y*dt
+  end
+  player.x = player.x + player.momentum.x*dt
 end
 
 function movements(dt)
@@ -155,15 +162,12 @@ function movements(dt)
   if love.keyboard.isDown("d") then
     player.x = player.x + speed*dt
     love.audio.play(soundm)
+    player.direction = "right"
   end
 
   if love.keyboard.isDown("q") then
     player.x = player.x - speed*dt
     love.audio.play(soundm)
+    player.direction = "left"
   end
-end
-
-function updatePos(dt)
-  player.x = player.x + player.momentum.x*dt
-  player.y = player.y + player.momentum.y*dt
 end
