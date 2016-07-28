@@ -1,5 +1,5 @@
-netWorking = {}
-function netWorking.load ()
+networking = {}
+function networking.load ()
 
   udp = socket.udp()
   udp:settimeout(0)
@@ -9,7 +9,7 @@ function netWorking.load ()
 
 end
 
-function netWorking.receive()
+function networking.receive()
   repeat
     data = udp:receive()
     if data ~= nil then

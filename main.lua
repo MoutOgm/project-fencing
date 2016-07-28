@@ -3,7 +3,7 @@ require "socket"
 require "math"
 require "modules.tools"
 require "modules.physics"
-require "modules.networkings"
+require "modules.networking"
 
 -- function loadPhysics()
 --   love.physics.setMeter(100)
@@ -44,15 +44,15 @@ function love.load()
   soundm = love.audio.newSource("music/passilence.wav")
   love.audio.setVolume(1)
   isPlaying = false
-  player = {direction = "right", cd = 0, isSprinting = 0, x = 0, y = 0, momentum = {x = 0, y = 0}, rotateSword = "forward", onGround = true}
+  player = {direction = "right", cd = 0, isSprinting = 0, x = 0, y = 0, momentum = {x = 0, y = 0}, swordRotation = "forward", onGround = true}
   sizeplayer = test:getWidth()
   playerScale = 4
-  playerSpeed = 150
-  playerSprintingSpeed = 300
+  playerSpeed = 300
+  playerSprintingSpeed = 500
   cdt = 3
   updateRate = 0.001
   timeUntilUpadate = 0
-  gravity = 500
+  gravity = 1000
   groundHeight = 800
   enemy = {x = 25056565, y = 55656}
 end
@@ -82,20 +82,20 @@ function love.draw()
   end
 
   if player.direction == "right" then
-    if player.rotateSword == "forward" then
+    if player.swordRotation == "forward" then
       love.graphics.draw(epee, player.x + playerScale * 6, player.y + 4, 0, playerScale, playerScale, 0, epee:getHeight()/2)
-    elseif player.rotateSword == "up" then
+    elseif player.swordRotation == "up" then
       love.graphics.draw(epee, player.x + playerScale * 6, player.y + 4, - math.pi/4,  playerScale, playerScale, 0, epee:getHeight()/2)
-    elseif player.rotateSword == "down" then
+    elseif player.swordRotation == "down" then
       love.graphics.draw(epee, player.x + playerScale * 6, player.y + 4, math.pi/4, playerScale, playerScale, 0, epee:getHeight()/2)
     end
   else
-    if player.rotateSword == "forward" then
+    if player.swordRotation == "forward" then
       love.graphics.draw(epee, player.x - playerScale * 6, player.y + 4, math.pi, playerScale, playerScale, 0, epee:getHeight()/2)
-    elseif player.rotateSword == "up" then
-      love.graphics.draw(epee, player.x - playerScale * 6, player.y + 4, math.pi/4*3, playerScale, playerScale, 0, epee:getHeight()/2)
-    elseif player.rotateSword == "down" then
+    elseif player.swordRotation == "up" then
       love.graphics.draw(epee, player.x - playerScale * 6, player.y + 4, math.pi/4*5, playerScale, playerScale, 0, epee:getHeight()/2)
+    elseif player.swordRotation == "down" then
+      love.graphics.draw(epee, player.x - playerScale * 6, player.y + 4, math.pi/4*3, playerScale, playerScale, 0, epee:getHeight()/2)
     end
   end
 
@@ -127,22 +127,22 @@ function love.keypressed(key)
     udp:send(id.." disconnected")
     love.event.quit()
   elseif key == "space" and player.onGround then
-    player.momentum.y = -350
+    player.momentum.y = -700
   elseif key == "f" then
     player.X = 800
     player.y = 0
-  elseif key == "z" then
-    player.rotateSword = "up"
-  elseif key == "s" then
-    player.rotateSword = "down"
+  elseif key == "z" and player.swordRotation == "forward" then
+    player.swordRotation = "up"
+  elseif key == "s" and player.swordRotation == "forward" then
+    player.swordRotation = "down"
   end
 end
 
 function love.keyreleased(key)
-  if key == "z" then
-    player.rotateSword = "forward"
-  elseif key == "s" then
-    player.rotateSword = "forward"
+  if key == "z" and player.swordRotation == "up" then
+    player.swordRotation = "forward"
+  elseif key == "s" and player.swordRotation == "down" then
+    player.swordRotation = "forward"
   end
 end
 
