@@ -29,7 +29,7 @@ function love.load()
   timeUntilUpadate = 0
   gravity = 1000
   groundHeight = 800
-  enemy = {direction = "right", x = 25056565, y = 55656, swordRotation = "forward"}
+  enemy = {direction = "right", x = 2565, y = 55656, swordRotation = "forward"}
 end
 
 function love.update(dt)

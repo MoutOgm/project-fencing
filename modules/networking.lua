@@ -16,12 +16,14 @@ function networking.receive()
       if data [1] ~= id then
         print(data [2])
         if data [2] == "position" then
-          enemy.x = data [3]
-          enemy.y = data [4]
+          enemy.x = data [4]
+          enemy.y = data [5]
         elseif data [2] == "direction" then
-          player.direction = data [3]
+          enemy.direction = data [6]
         elseif data [2]  == "swordRotation" then
-          player.swordRotation = data [3]
+          enemy.swordRotation.forward = data [7]
+          enemy.swordRotation.up = data [8]
+          enemy.swordRotation.down = data [9]
         end
       end
     end
