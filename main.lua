@@ -43,7 +43,7 @@ function love.update(dt)
     timeUntilUpadate = updateRate
     udp:send(id.." position ".. player.x.." "..player.y)
     udp:send(id.." direction ".. player.direction)
-    udp:send(id.." position epee".. player.swordRotation)
+    udp:send(id.." swordRotation ".. player.swordRotation)
   else
     timeUntilUpadate = timeUntilUpadate - dt
   end
@@ -82,20 +82,20 @@ function love.draw()
   else
     love.graphics.draw(test, enemy.x, enemy.y, 0,  - playerScale, playerScale, test:getWidth()/2, test:getHeight()/2)
   end
-  if player.direction == "right" then
-    if player.swordRotation == "forward" then
+  if enemy.direction == "right" then
+    if enemy.swordRotation == "forward" then
       love.graphics.draw(epee, enemy.x + playerScale * 6, enemy.y + 4, 0, playerScale, playerScale, 0, epee:getHeight()/2)
-    elseif player.swordRotation == "up" then
+    elseif enemy.swordRotation == "up" then
       love.graphics.draw(epee, enemy.x + playerScale * 6, enemy.y + 4, - math.pi/4,  playerScale, playerScale, 0, epee:getHeight()/2)
-    elseif player.swordRotation == "down" then
+    elseif enemy.swordRotation == "down" then
       love.graphics.draw(epee, enemy.x + playerScale * 6, enemy.y + 4, math.pi/4, playerScale, playerScale, 0, epee:getHeight()/2)
     end
   else
-    if player.swordRotation == "forward" then
+    if enemy.swordRotation == "forward" then
       love.graphics.draw(epee, enemy.x - playerScale * 6, enemy.y + 4, math.pi, playerScale, playerScale, 0, epee:getHeight()/2)
-    elseif player.swordRotation == "up" then
+    elseif enemy.swordRotation == "up" then
       love.graphics.draw(epee, enemy.x - playerScale * 6, enemy.y + 4, math.pi/4*5, playerScale, playerScale, 0, epee:getHeight()/2)
-    elseif player.swordRotation == "down" then
+    elseif enemy.swordRotation == "down" then
       love.graphics.draw(epee, enemy.x - playerScale * 6, enemy.y + 4, math.pi/4*3, playerScale, playerScale, 0, epee:getHeight()/2)
     end
   end
