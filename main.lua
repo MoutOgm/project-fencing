@@ -145,10 +145,10 @@ end
 
 function love.keyreleased(key)
   if key == "z" and player.swordRotation == "up" then
-    player.spriteIndex = "epeeUp"
+    player.spriteIndex = "normal"
     player.swordRotation = "forward"
   elseif key == "s" and player.swordRotation == "down" then
-    player.spriteIndex = "epeeDown"
+    player.spriteIndex = "normal"
     player.swordRotation = "forward"
   end
 end
