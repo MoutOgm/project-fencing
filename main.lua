@@ -135,8 +135,10 @@ function love.keypressed(key)
     player.X = 800
     player.y = 0
   elseif key == "z" and player.swordRotation == "forward" then
+    player.spriteIndex = "epeeUp"
     player.swordRotation = "up"
   elseif key == "s" and player.swordRotation == "forward" then
+    player.spriteIndex = "epeeDown"
     player.swordRotation = "down"
   end
 end
