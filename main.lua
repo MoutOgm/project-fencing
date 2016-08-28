@@ -19,7 +19,10 @@ function love.load()
 
   playerSprites = {}
   playerSprites.normal = love.graphics.newImage("sprites/player/normal.png")
-  playerSprites.run = love.graphics.newImage("sprites/player/run.png")
+  playerSprites.run1 = love.graphics.newImage("sprites/player/run1.png")
+  playerSprites.run2 = love.graphics.newImage("sprites/player/run2.png")
+  playerSprites.run3 = love.graphics.newImage("sprites/player/run3.png")
+  playerSprites.run4 = love.graphics.newImage("sprites/player/run4.png")
 
   epee = love.graphics.newImage("sprites/epee.png")
   sound = love.audio.newSource("music/music.mp3")
@@ -36,7 +39,7 @@ function love.load()
   gravity = 1000
   groundHeight = 800
   timeUntilUpdate = 0
-  animations = {none = {'normal'}, run = {'normal', 'run'}}
+  animations = {none = {'normal'}, run = {'run1', 'run2', 'run3', 'run4'}}
   animation = {type = "none", time = 0, speed = 0}
   enemy = {direction = "right", x = 2565, y = 55656, swordRotation = "forward", spriteIndex = "normal"}
 end
@@ -127,7 +130,7 @@ function love.keypressed(key)
   elseif key == 'd' or key == 'q' then
     animation.type = 'run'
     animation.time = 0
-    animation.speed = 8
+    animation.speed = 14
   end
 end
 
