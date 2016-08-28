@@ -9,12 +9,11 @@ end
 
 function physics.update(dt)
   player.momentum.y = player.momentum.y + gravity*dt
-  if player.y < groundHeight then
+  if player.y+player.momentum.y*dt < groundHeight then
     player.onGround = false
     player.y = player.y + player.momentum.y*dt
-  elseif player.momentum.y < 0 then
-    player.y = player.y + player.momentum.y*dt
   else
+    player.y = groundHeight
     player.onGround = true
   end
   player.x = player.x + player.momentum.x*dt
