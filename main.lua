@@ -116,7 +116,6 @@ function love.keypressed(key)
     player.cd = cdt
     player.isSprinting = 1
   elseif key == "escape" then
-    udp:send(id.." disconnected")
     love.event.quit()
   elseif key == "space" and player.onGround then
     player.momentum.y = -700
@@ -144,6 +143,10 @@ function love.keyreleased(key)
     animation.time = 0
     animation.speed = 0
   end
+end
+
+function love.quit()
+  udp:send(id.." disconnected")
 end
 
 function movements(dt)
