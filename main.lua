@@ -82,7 +82,7 @@ function love.draw()
     player.y - 6.5*playerScale + math.sin(directions[player.direction][player.swordRotation]*0.5)*playerScale*directions.flip[player.direction],
     0.4*directions[player.direction][player.swordRotation], 0.4*playerScale*directions.flip[player.direction], playerScale, 0, epee:getHeight()/2)
 
-  love.graphics.circle("fill", player.x, player.y, 5)
+  love.graphics.points(player.x, player.y)
 
   -- DESSINER LE JOUEUR ENNEMI
   love.graphics.setColor(252, 45, 201)
