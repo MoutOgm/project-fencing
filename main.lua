@@ -13,14 +13,19 @@ function love.load()
   width , height = 1600, 900
   love.window.setMode(width, height, {fullscreen = true})
   love.graphics.setDefaultFilter("nearest")
+
+  playerSprites = {}
+  playerSprites.normal = love.graphics.newImage("sprites/normal.png")
+  playerSprites.epeeDown = love.graphics.newImage("sprites/bas.png")
+  playerSprites.epeeUp = love.graphics.newImage("sprites/haut.png")
+
   epee = love.graphics.newImage("sprites/epee.png")
-  test = love.graphics.newImage("sprites/test.png")
   sound = love.audio.newSource("music/music.mp3")
   soundm = love.audio.newSource("music/step.wav")
   love.audio.setVolume(1)
   isPlaying = false
-  player = {direction = "right", cd = 0, isSprinting = 0, x = 0, y = 0, momentum = {x = 0, y = 0}, swordRotation = "forward", onGround = true}
-  sizeplayer = test:getWidth()
+  player = {direction = "right", cd = 0, isSprinting = 0, x = 0, y = 0, momentum = {x = 0, y = 0}, swordRotation = "forward", onGround = true, spriteIndex = "normal"}
+  sizeplayer = playerSprites[player.spriteIndex]:getWidth()
   playerScale = 4
   playerSpeed = 300
   playerSprintingSpeed = 500
@@ -28,6 +33,7 @@ function love.load()
   updateRate = 0.001
   timeUntilUpadate = 0
   gravity = 1000
+  groundHeight = 800
   enemy = {direction = "right", x = 2565, y = 55656, swordRotation = "forward"}
 end
 
@@ -52,9 +58,9 @@ function love.draw()
   love.graphics.setColor(255, 255, 255)
   love.graphics.print("FPS: "..tostring(love.timer.getFPS()), 1533, 05)
   if player.direction == "right" then
-    love.graphics.draw(test, player.x, player.y, 0, playerScale, playerScale, test:getWidth()/2, test:getHeight()/2)
+    love.graphics.draw(playerSprites[player.spriteIndex], player.x, player.y, 0, playerScale, playerScale, playerSprites[player.spriteIndex]:getWidth()/2, playerSprites[player.spriteIndex]:getHeight()/2)
   else
-    love.graphics.draw(test, player.x, player.y, 0,  - playerScale, playerScale, test:getWidth()/2, test:getHeight()/2)
+    love.graphics.draw(playerSprites[player.spriteIndex], player.x, player.y, 0,  - playerScale, playerScale, playerSprites[player.spriteIndex]:getWidth()/2, playerSprites[player.spriteIndex]:getHeight()/2)
   end
 
   if player.direction == "right" then
@@ -77,9 +83,9 @@ function love.draw()
 
   love.graphics.setColor(252, 45, 201)
   if enemy.direction == "right" then
-    love.graphics.draw(test, enemy.x, enemy.y, 0, playerScale, playerScale, test:getWidth()/2, test:getHeight()/2)
+    love.graphics.draw(playerSprites[player.spriteIndex], enemy.x, enemy.y, 0, playerScale, playerScale, playerSprites[player.spriteIndex]:getWidth()/2, playerSprites[player.spriteIndex]:getHeight()/2)
   else
-    love.graphics.draw(test, enemy.x, enemy.y, 0,  - playerScale, playerScale, test:getWidth()/2, test:getHeight()/2)
+    love.graphics.draw(playerSprites[player.spriteIndex], enemy.x, enemy.y, 0,  - playerScale, playerScale, playerSprites[player.spriteIndex]:getWidth()/2, playerSprites[player.spriteIndex]:getHeight()/2)
   end
   if enemy.direction == "right" then
     if enemy.swordRotation == "forward" then
