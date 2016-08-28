@@ -19,8 +19,10 @@ function love.load()
 
   playerSprites = {}
   playerSprites.normal = love.graphics.newImage("sprites/player/normal.png")
-  playerSprites.epeeDown = love.graphics.newImage("sprites/player/down.png")
-  playerSprites.epeeUp = love.graphics.newImage("sprites/player/up.png")
+  playerSprites.run1 = love.graphics.newImage("sprites/player/run1.png")
+  playerSprites.run2 = love.graphics.newImage("sprites/player/run2.png")
+  playerSprites.run3 = love.graphics.newImage("sprites/player/run3.png")
+  playerSprites.run4 = love.graphics.newImage("sprites/player/run4.png")
 
   epee = love.graphics.newImage("sprites/epee.png")
   sound = love.audio.newSource("music/music.mp3")
@@ -28,32 +30,36 @@ function love.load()
   love.audio.setVolume(1)
   isPlaying = false
   player = {direction = "right", cd = 0, isSprinting = 0, x = 0, y = 0, momentum = {x = 0, y = 0}, swordRotation = "forward", onGround = true, spriteIndex = "normal"}
-  sizeplayer = playerSprites[player.spriteIndex]:getWidth()
+  sizeplayer = playerSprites.normal:getWidth()
   playerScale = 6
   playerSpeed = 300
   playerSprintingSpeed = 500
   cdt = 3
   updateRate = 0.001
-  timeUntilUpadate = 0
   gravity = 1000
   groundHeight = 800
+  timeUntilUpdate = 0
+  animations = {none = {'normal'}, run = {'run1', 'run2', 'run3', 'run4'}}
+  animation = {type = "none", time = 0, speed = 0}
   enemy = {direction = "right", x = 2565, y = 55656, swordRotation = "forward", spriteIndex = "normal"}
 end
 
 function love.update(dt)
+  animation.time = animation.time + animation.speed*dt
+  player.spriteIndex = animations[animation.type][(math.floor(animation.time) - math.floor(animation.time/#animations[animation.type])*#animations[animation.type])+1]
   TEsound.cleanup()
   networking.receive()
   physics.update(dt)
   movements(dt)
   if player.isSprinting > 0 then player.isSprinting = player.isSprinting - dt end
 
-  if timeUntilUpadate < 0 then
-    timeUntilUpadate = updateRate
+  if timeUntilUpdate < 0 then
+    timeUntilUpdate = updateRate
     udp:send(id.." position ".. player.x.." "..player.y)
     udp:send(id.." direction ".. player.direction)
     udp:send(id.." swordRotation ".. player.swordRotation)
   else
-    timeUntilUpadate = timeUntilUpadate - dt
+    timeUntilUpdate = timeUntilUpdate - dt
   end
 end
 
@@ -76,7 +82,7 @@ function love.draw()
     player.y - 6.5*playerScale + math.sin(directions[player.direction][player.swordRotation]*0.5)*playerScale*directions.flip[player.direction],
     0.4*directions[player.direction][player.swordRotation], 0.4*playerScale*directions.flip[player.direction], playerScale, 0, epee:getHeight()/2)
 
-  love.graphics.circle("fill", player.x, player.y, 5)
+  love.graphics.points(player.x, player.y)
 
   -- DESSINER LE JOUEUR ENNEMI
   love.graphics.setColor(252, 45, 201)
@@ -118,21 +124,25 @@ function love.keypressed(key)
     player.X = 800
     player.y = 0
   elseif key == "z" and player.swordRotation == "forward" then
-    player.spriteIndex = "epeeUp"
     player.swordRotation = "up"
   elseif key == "s" and player.swordRotation == "forward" then
-    player.spriteIndex = "epeeDown"
     player.swordRotation = "down"
+  elseif key == 'd' or key == 'q' then
+    animation.type = 'run'
+    animation.time = 0
+    animation.speed = 14
   end
 end
 
 function love.keyreleased(key)
   if key == "z" and player.swordRotation == "up" then
-    player.spriteIndex = "normal"
     player.swordRotation = "forward"
   elseif key == "s" and player.swordRotation == "down" then
-    player.spriteIndex = "normal"
     player.swordRotation = "forward"
+  elseif key == 'd' or key == 'q' then
+    animation.type = 'none'
+    animation.time = 0
+    animation.speed = 0
   end
 end
 
